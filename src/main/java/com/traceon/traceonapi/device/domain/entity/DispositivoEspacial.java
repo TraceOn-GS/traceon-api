@@ -1,6 +1,7 @@
 package com.traceon.traceonapi.device.domain.entity;
 
 import com.traceon.traceonapi.device.domain.enums.StatusDispositivo;
+import com.traceon.traceonapi.device.domain.exception.DispositivoDesativadoException;
 import com.traceon.traceonapi.device.dto.CreateDispositivoRequest;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,8 +58,8 @@ public class DispositivoEspacial {
     public void colocarEmManutencao() {
 
         if (status == StatusDispositivo.DESATIVADO) {
-            throw new IllegalStateException(
-                    "Dispositivo desativado não pode entrar em manutenção."
+            throw new DispositivoDesativadoException(
+
             );
         }
 

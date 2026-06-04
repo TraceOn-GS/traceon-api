@@ -101,7 +101,10 @@ public class DispositivoService {
 
         DispositivoEspacial dispositivo =
                 dispositivoRepository.findById(id)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+                                new DispositivoNaoEncontradoException(
+                                        id
+                                ));
 
         dispositivo.ativar();
 
@@ -117,7 +120,10 @@ public class DispositivoService {
 
         DispositivoEspacial dispositivo =
                 dispositivoRepository.findById(id)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+                                new DispositivoNaoEncontradoException(
+                                        id
+                                ));
 
         dispositivo.desativar();
 
@@ -133,7 +139,10 @@ public class DispositivoService {
 
         DispositivoEspacial dispositivo =
                 dispositivoRepository.findById(id)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+                                new DispositivoNaoEncontradoException(
+                                        id
+                                ));
 
         dispositivo.colocarEmManutencao();
 
