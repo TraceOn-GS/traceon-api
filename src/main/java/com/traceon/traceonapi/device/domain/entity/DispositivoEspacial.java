@@ -38,13 +38,6 @@ public class DispositivoEspacial {
     }
 
     public void ativar() {
-
-        if (status == StatusDispositivo.MANUTENCAO) {
-            throw new IllegalStateException(
-                    "Dispositivo em manutenção não pode ser ativado."
-            );
-        }
-
         this.status = StatusDispositivo.OPERACIONAL;
 
     }
