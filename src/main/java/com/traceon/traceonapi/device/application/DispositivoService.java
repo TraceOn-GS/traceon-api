@@ -1,57 +1,50 @@
 package com.traceon.traceonapi.device.application;
 
 import com.traceon.traceonapi.device.domain.entity.DispositivoEspacial;
-import com.traceon.traceonapi.device.domain.enums.StatusDispositivo;
+import com.traceon.traceonapi.device.domain.exception.DispositivoNaoEncontradoException;
+import com.traceon.traceonapi.device.domain.repository.DispositivoRepositoryInterface;
 import com.traceon.traceonapi.device.dto.CreateDispositivoRequest;
 import com.traceon.traceonapi.device.dto.DispositivoResponse;
 import com.traceon.traceonapi.device.dto.UpdateDispositivoRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DispositivoService {
 
-    private final List<DispositivoEspacial> dispositivos =
-            new ArrayList<>();
+    private final DispositivoRepositoryInterface dispositivoRepository;
 
     private Long sequence = 1L;
+
+    public DispositivoService(
+            DispositivoRepositoryInterface dispositivoRepository
+    ) {
+        this.dispositivoRepository = dispositivoRepository;
+    }
 
     public DispositivoResponse create(
             CreateDispositivoRequest request
     ) {
 
         DispositivoEspacial dispositivo =
-                new DispositivoEspacial();
+                new DispositivoEspacial(
+                        sequence++,
+                        request.codigoSerial(),
+                        request.modelo(),
+                        request.energiaAtual()
+                );
 
-        dispositivo.setId(sequence++);
-
-        dispositivo.setCodigoSerial(
-                request.codigoSerial()
+        return toResponse(
+                dispositivoRepository.save(dispositivo)
         );
-
-        dispositivo.setModelo(
-                request.modelo()
-        );
-
-        dispositivo.setEnergiaAtual(
-                request.energiaAtual()
-        );
-
-        dispositivo.setStatus(
-                StatusDispositivo.OPERACIONAL
-        );
-
-        dispositivos.add(dispositivo);
-
-        return toResponse(dispositivo);
 
     }
 
     public List<DispositivoResponse> findAll() {
 
-        return dispositivos.stream()
+        return dispositivoRepository.findAll()
+                .stream()
                 .map(this::toResponse)
                 .toList();
 
@@ -61,11 +54,12 @@ public class DispositivoService {
             Long id
     ) {
 
-        return dispositivos.stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
+        return dispositivoRepository.findById(id)
                 .map(this::toResponse)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new DispositivoNaoEncontradoException(
+                                id
+                        ));
 
     }
 
@@ -75,29 +69,29 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                getDispositivo(id);
+                dispositivoRepository.findById(id)
+                        .orElseThrow(() ->
+                                new DispositivoNaoEncontradoException(
+                                        id
+                                ));
 
-        dispositivo.setCodigoSerial(
-                request.codigoSerial()
-        );
-
-        dispositivo.setModelo(
-                request.modelo()
-        );
-
-        dispositivo.setEnergiaAtual(
+        dispositivo.atualizarDados(
+                request.codigoSerial(),
+                request.modelo(),
                 request.energiaAtual()
         );
+
+        dispositivoRepository.save(dispositivo);
 
         return toResponse(dispositivo);
 
     }
 
-    public void delete(Long id) {
+    public void delete(
+            Long id
+    ) {
 
-        dispositivos.removeIf(
-                d -> d.getId().equals(id)
-        );
+        dispositivoRepository.deleteById(id);
 
     }
 
@@ -106,11 +100,12 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                getDispositivo(id);
+                dispositivoRepository.findById(id)
+                        .orElseThrow();
 
-        dispositivo.setStatus(
-                StatusDispositivo.OPERACIONAL
-        );
+        dispositivo.ativar();
+
+        dispositivoRepository.save(dispositivo);
 
         return toResponse(dispositivo);
 
@@ -121,11 +116,12 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                getDispositivo(id);
+                dispositivoRepository.findById(id)
+                        .orElseThrow();
 
-        dispositivo.setStatus(
-                StatusDispositivo.DESATIVADO
-        );
+        dispositivo.desativar();
+
+        dispositivoRepository.save(dispositivo);
 
         return toResponse(dispositivo);
 
@@ -136,24 +132,14 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                getDispositivo(id);
+                dispositivoRepository.findById(id)
+                        .orElseThrow();
 
-        dispositivo.setStatus(
-                StatusDispositivo.MANUTENCAO
-        );
+        dispositivo.colocarEmManutencao();
+
+        dispositivoRepository.save(dispositivo);
 
         return toResponse(dispositivo);
-
-    }
-
-    private DispositivoEspacial getDispositivo(
-            Long id
-    ) {
-
-        return dispositivos.stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
-                .orElseThrow();
 
     }
 
@@ -162,17 +148,11 @@ public class DispositivoService {
     ) {
 
         return new DispositivoResponse(
-
                 dispositivo.getId(),
-
                 dispositivo.getCodigoSerial(),
-
                 dispositivo.getModelo(),
-
                 dispositivo.getEnergiaAtual(),
-
                 dispositivo.getStatus()
-
         );
 
     }

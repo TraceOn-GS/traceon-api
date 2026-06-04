@@ -4,7 +4,7 @@ import com.traceon.traceonapi.device.domain.entity.DispositivoEspacial;
 import java.util.List;
 import java.util.Optional;
 
-public interface DispositivoRepository {
+public interface DispositivoRepositoryInterface {
 
     Optional<DispositivoEspacial> findById(Long id);
 
@@ -13,5 +13,5 @@ public interface DispositivoRepository {
     DispositivoEspacial save(
             DispositivoEspacial dispositivo
     );
-
+    void deleteById(Long id);
 }
