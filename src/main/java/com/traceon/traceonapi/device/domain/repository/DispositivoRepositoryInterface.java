@@ -6,12 +6,12 @@ import java.util.Optional;
 
 public interface DispositivoRepositoryInterface {
 
-    Optional<DispositivoEspacial> findById(Long id);
+    Optional<DispositivoEspacial> buscarPorId(Long id);
 
-    List<DispositivoEspacial> findAll();
+    List<DispositivoEspacial> buscarTodos();
 
-    DispositivoEspacial save(
+    DispositivoEspacial salvar(
             DispositivoEspacial dispositivo
     );
-    void deleteById(Long id);
+    void deletarPorId(Long id);
 }

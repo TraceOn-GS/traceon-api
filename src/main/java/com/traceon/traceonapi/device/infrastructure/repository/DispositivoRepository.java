@@ -1,7 +1,6 @@
 package com.traceon.traceonapi.device.infrastructure.repository;
 import com.traceon.traceonapi.device.domain.entity.DispositivoEspacial;
 import com.traceon.traceonapi.device.domain.repository.DispositivoRepositoryInterface;
-import com.traceon.traceonapi.device.dto.DispositivoResponse;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,25 +13,25 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
     private final List<DispositivoEspacial> dispositivos = new ArrayList<>();
 
     @Override
-    public Optional<DispositivoEspacial> findById(Long id){
+    public Optional<DispositivoEspacial> buscarPorId(Long id){
         return dispositivos.stream()
                 .filter(d -> d.getId().equals(id))
                 .findFirst();
     }
 
     @Override
-    public List<DispositivoEspacial> findAll() {
+    public List<DispositivoEspacial> buscarTodos() {
         return dispositivos;
     }
 
 
     @Override
-    public DispositivoEspacial save(
+    public DispositivoEspacial salvar(
             DispositivoEspacial dispositivo
     ) {
 
         Optional<DispositivoEspacial> existente =
-                findById(dispositivo.getId());
+                buscarPorId(dispositivo.getId());
 
         if(existente.isPresent()){
 
@@ -47,7 +46,7 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
     }
 
     @Override
-    public void deleteById(Long id){
+    public void deletarPorId(Long id){
         dispositivos.removeIf(d -> d.getId().equals(id));
     }
 }

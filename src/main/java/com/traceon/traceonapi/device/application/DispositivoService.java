@@ -36,14 +36,14 @@ public class DispositivoService {
                 );
 
         return toResponse(
-                dispositivoRepository.save(dispositivo)
+                dispositivoRepository.salvar(dispositivo)
         );
 
     }
 
     public List<DispositivoResponse> findAll() {
 
-        return dispositivoRepository.findAll()
+        return dispositivoRepository.buscarTodos()
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -54,7 +54,7 @@ public class DispositivoService {
             Long id
     ) {
 
-        return dispositivoRepository.findById(id)
+        return dispositivoRepository.buscarPorId(id)
                 .map(this::toResponse)
                 .orElseThrow(() ->
                         new DispositivoNaoEncontradoException(
@@ -69,7 +69,7 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                dispositivoRepository.findById(id)
+                dispositivoRepository.buscarPorId(id)
                         .orElseThrow(() ->
                                 new DispositivoNaoEncontradoException(
                                         id
@@ -81,7 +81,7 @@ public class DispositivoService {
                 request.energiaAtual()
         );
 
-        dispositivoRepository.save(dispositivo);
+        dispositivoRepository.salvar(dispositivo);
 
         return toResponse(dispositivo);
 
@@ -91,7 +91,7 @@ public class DispositivoService {
             Long id
     ) {
 
-        dispositivoRepository.deleteById(id);
+        dispositivoRepository.deletarPorId(id);
 
     }
 
@@ -100,7 +100,7 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                dispositivoRepository.findById(id)
+                dispositivoRepository.buscarPorId(id)
                         .orElseThrow(() ->
                                 new DispositivoNaoEncontradoException(
                                         id
@@ -108,7 +108,7 @@ public class DispositivoService {
 
         dispositivo.ativar();
 
-        dispositivoRepository.save(dispositivo);
+        dispositivoRepository.salvar(dispositivo);
 
         return toResponse(dispositivo);
 
@@ -119,7 +119,7 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                dispositivoRepository.findById(id)
+                dispositivoRepository.buscarPorId(id)
                         .orElseThrow(() ->
                                 new DispositivoNaoEncontradoException(
                                         id
@@ -127,7 +127,7 @@ public class DispositivoService {
 
         dispositivo.desativar();
 
-        dispositivoRepository.save(dispositivo);
+        dispositivoRepository.salvar(dispositivo);
 
         return toResponse(dispositivo);
 
@@ -138,7 +138,7 @@ public class DispositivoService {
     ) {
 
         DispositivoEspacial dispositivo =
-                dispositivoRepository.findById(id)
+                dispositivoRepository.buscarPorId(id)
                         .orElseThrow(() ->
                                 new DispositivoNaoEncontradoException(
                                         id
@@ -146,7 +146,7 @@ public class DispositivoService {
 
         dispositivo.colocarEmManutencao();
 
-        dispositivoRepository.save(dispositivo);
+        dispositivoRepository.salvar(dispositivo);
 
         return toResponse(dispositivo);
 
