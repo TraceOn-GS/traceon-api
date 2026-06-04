@@ -25,10 +25,25 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
         return dispositivos;
     }
 
+
     @Override
-    public DispositivoEspacial save(DispositivoEspacial dispositivo){
+    public DispositivoEspacial save(
+            DispositivoEspacial dispositivo
+    ) {
+
+        Optional<DispositivoEspacial> existente =
+                findById(dispositivo.getId());
+
+        if(existente.isPresent()){
+
+            dispositivos.remove(existente.get());
+
+        }
+
         dispositivos.add(dispositivo);
+
         return dispositivo;
+
     }
 
     @Override

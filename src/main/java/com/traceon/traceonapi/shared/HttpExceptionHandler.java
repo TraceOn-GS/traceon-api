@@ -1,4 +1,4 @@
-package com.traceon.traceonapi.shared.exception;
+package com.traceon.traceonapi.shared;
 
 import com.traceon.traceonapi.device.domain.exception.DispositivoNaoEncontradoException;
 import com.traceon.traceonapi.shared.dto.ErrorResponse;
