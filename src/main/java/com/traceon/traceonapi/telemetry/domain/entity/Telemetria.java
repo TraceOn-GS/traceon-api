@@ -1,5 +1,6 @@
 package com.traceon.traceonapi.telemetry.domain.entity;
 
+import com.traceon.traceonapi.telemetry.domain.exception.QualidadeSinalInvalidaException;
 import com.traceon.traceonapi.telemetry.domain.valueobject.Localizacao;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,9 @@ public class Telemetria {
     private final UUID id;
     private final UUID dispositivoId;
 
-    private Double temperatura;
+    private Double temperaturaInterna;
+    private Double temperaturaExterna;
+    private Double qualidadeSinal;
     private Double nivelEnergia;
     private Double radiacao;
 
@@ -26,9 +29,11 @@ public class Telemetria {
     public Telemetria(
             UUID id,
             UUID dispositivoId,
-            Double temperatura,
+            Double temperaturaInterna,
+            Double temperaturaExterna,
             Double nivelEnergia,
             Double radiacao,
+            Double qualidadeSinal,
             Localizacao localizacao,
             LocalDateTime timestamp
     ) {
@@ -54,10 +59,13 @@ public class Telemetria {
         );
 
         validarEnergia(nivelEnergia);
+        validarQualidadeSinal(qualidadeSinal);
 
-        this.temperatura = temperatura;
+        this.temperaturaInterna = temperaturaInterna;
+        this.temperaturaExterna = temperaturaExterna;
         this.nivelEnergia = nivelEnergia;
         this.radiacao = radiacao;
+        this.qualidadeSinal = qualidadeSinal;
 
     }
 
@@ -75,5 +83,18 @@ public class Telemetria {
         }
 
     }
+    private void validarQualidadeSinal(
+            Double qualidadeSinal
+    ) {
 
+        Objects.requireNonNull(
+                qualidadeSinal,
+                "Qualidade do sinal obrigatória"
+        );
+
+        if (qualidadeSinal < 0 || qualidadeSinal > 100) {
+            throw new QualidadeSinalInvalidaException();
+        }
+
+    }
 }

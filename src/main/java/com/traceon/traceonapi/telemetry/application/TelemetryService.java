@@ -57,9 +57,11 @@ public class TelemetryService {
                 new Telemetria(
                         UUID.randomUUID(),
                         dispositivo.getId(),
-                        request.temperatura(),
+                        request.temperaturaInterna(),
+                        request.temperaturaExterna(),
                         request.nivelEnergia(),
                         request.radiacao(),
+                        request.qualidadeSinal(),
                         localizacao,
                         LocalDateTime.now()
                 );
@@ -121,9 +123,11 @@ public class TelemetryService {
         return new TelemetryResponse(
                 telemetria.getId(),
                 telemetria.getDispositivoId(),
-                telemetria.getTemperatura(),
+                telemetria.getTemperaturaInterna(),
+                telemetria.getTemperaturaExterna(),
                 telemetria.getNivelEnergia(),
                 telemetria.getRadiacao(),
+                telemetria.getQualidadeSinal(),
                 new LocationResponse(
                         telemetria.getLocalizacao().getLatitude(),
                         telemetria.getLocalizacao().getLongitude(),
