@@ -12,7 +12,9 @@ import com.traceon.traceonapi.mission.domain.exception.OperacaoMissaoInvalidaExc
 import com.traceon.traceonapi.shared.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import com.traceon.traceonapi.telemetry.domain.exception.DispositivoNaoEncontradoParaTelemetriaException;
+import com.traceon.traceonapi.telemetry.domain.exception.TelemetriaNaoEncontradaException;
+import com.traceon.traceonapi.telemetry.domain.exception.TelemetriaNaoEncontradaParaDispositivoException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -165,6 +167,62 @@ public class HttpExceptionHandler {
                         new ErrorResponse(
                                 ex.getMessage(),
                                 400
+                        )
+                );
+
+    }
+
+    //  TELEMETRY EXCEPTIONS -------------
+
+    @ExceptionHandler(
+            DispositivoNaoEncontradoParaTelemetriaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleDispositivoNaoEncontradoParaTelemetria(
+            DispositivoNaoEncontradoParaTelemetriaException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            TelemetriaNaoEncontradaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleTelemetriaNaoEncontrada(
+            TelemetriaNaoEncontradaException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            TelemetriaNaoEncontradaParaDispositivoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleTelemetriaNaoEncontradaParaDispositivo(
+            TelemetriaNaoEncontradaParaDispositivoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
                         )
                 );
 
