@@ -1,6 +1,9 @@
 package com.traceon.traceonapi.shared;
 
 
+import com.traceon.traceonapi.alert.domain.exception.AlertaJaResolvidoException;
+import com.traceon.traceonapi.alert.domain.exception.AlertaNaoEncontradoException;
+import com.traceon.traceonapi.alert.domain.exception.AlertaNaoPodeSerIgnoradoException;
 import com.traceon.traceonapi.device.domain.exception.DispositivoDesativadoException;
 import com.traceon.traceonapi.device.domain.exception.DispositivoNaoEncontradoException;
 import com.traceon.traceonapi.mission.domain.exception.DispositivoDesativadoParaMissaoException;
@@ -223,6 +226,62 @@ public class HttpExceptionHandler {
                         new ErrorResponse(
                                 ex.getMessage(),
                                 404
+                        )
+                );
+
+    }
+
+    //  ALERT EXCEPTIONS -------------
+
+    @ExceptionHandler(
+            AlertaNaoEncontradoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleAlertaNaoEncontrado(
+            AlertaNaoEncontradoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            AlertaJaResolvidoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleAlertaJaResolvido(
+            AlertaJaResolvidoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            AlertaNaoPodeSerIgnoradoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleAlertaNaoPodeSerIgnorado(
+            AlertaNaoPodeSerIgnoradoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
                         )
                 );
 
