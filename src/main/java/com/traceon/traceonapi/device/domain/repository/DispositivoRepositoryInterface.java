@@ -13,5 +13,5 @@ public interface DispositivoRepositoryInterface {
     DispositivoEspacial salvar(
             DispositivoEspacial dispositivo
     );
-    void deletarPorId(Long id);
+    void remover(Long id);
 }

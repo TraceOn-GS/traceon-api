@@ -33,11 +33,7 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
         Optional<DispositivoEspacial> existente =
                 buscarPorId(dispositivo.getId());
 
-        if(existente.isPresent()){
-
-            dispositivos.remove(existente.get());
-
-        }
+        existente.ifPresent(dispositivos::remove);
 
         dispositivos.add(dispositivo);
 
@@ -46,7 +42,7 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
     }
 
     @Override
-    public void deletarPorId(Long id){
+    public void remover(Long id){
         dispositivos.removeIf(d -> d.getId().equals(id));
     }
 }

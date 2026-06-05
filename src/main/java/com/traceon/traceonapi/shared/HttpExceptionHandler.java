@@ -3,6 +3,8 @@ package com.traceon.traceonapi.shared;
 
 import com.traceon.traceonapi.device.domain.exception.DispositivoDesativadoException;
 import com.traceon.traceonapi.device.domain.exception.DispositivoNaoEncontradoException;
+import com.traceon.traceonapi.mission.domain.exception.MissaoNaoEncontradaException;
+import com.traceon.traceonapi.mission.domain.exception.OperacaoMissaoInvalidaException;
 import com.traceon.traceonapi.shared.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +60,44 @@ public class HttpExceptionHandler {
     )
     public ResponseEntity<ErrorResponse> handleDispositivoDesativado(
             DispositivoDesativadoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+//  MISSION EXCEPTIONS -------------
+
+    @ExceptionHandler(
+            MissaoNaoEncontradaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleMissaoNaoEncontrada(
+            MissaoNaoEncontradaException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            OperacaoMissaoInvalidaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleOperacaoMissaoInvalida(
+            OperacaoMissaoInvalidaException ex
     ) {
 
         return ResponseEntity

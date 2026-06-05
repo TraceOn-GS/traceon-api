@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DispositivoService {
+public class DeviceService {
 
     private final DispositivoRepositoryInterface dispositivoRepository;
 
     private Long sequence = 1L;
 
-    public DispositivoService(
+    public DeviceService(
             DispositivoRepositoryInterface dispositivoRepository
     ) {
         this.dispositivoRepository = dispositivoRepository;
@@ -91,7 +91,7 @@ public class DispositivoService {
             Long id
     ) {
 
-        dispositivoRepository.deletarPorId(id);
+        dispositivoRepository.remover(id);
 
     }
 

@@ -1,6 +1,6 @@
 package com.traceon.traceonapi.device.controller;
 
-import com.traceon.traceonapi.device.application.DispositivoService;
+import com.traceon.traceonapi.device.application.DeviceService;
 import com.traceon.traceonapi.device.dto.CreateDispositivoRequest;
 import com.traceon.traceonapi.device.dto.DispositivoResponse;
 import com.traceon.traceonapi.device.dto.UpdateDispositivoRequest;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DispositivoController {
 
-    private final DispositivoService service;
+    private final DeviceService service;
 
     @GetMapping
     public ResponseEntity<SuccessResponse<List<DispositivoResponse>>> findAll() {
