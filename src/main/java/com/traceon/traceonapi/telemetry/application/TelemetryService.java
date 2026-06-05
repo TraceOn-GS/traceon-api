@@ -1,11 +1,14 @@
 package com.traceon.traceonapi.telemetry.application;
 
+import com.traceon.traceonapi.alert.domain.entity.Alerta;
+import com.traceon.traceonapi.alert.domain.repository.AlertaRepositoryInterface;
 import com.traceon.traceonapi.device.domain.entity.DispositivoEspacial;
 import com.traceon.traceonapi.device.domain.repository.DispositivoRepositoryInterface;
 import com.traceon.traceonapi.telemetry.domain.entity.Telemetria;
 import com.traceon.traceonapi.telemetry.domain.exception.DispositivoNaoEncontradoParaTelemetriaException;
 import com.traceon.traceonapi.telemetry.domain.exception.TelemetriaNaoEncontradaParaDispositivoException;
 import com.traceon.traceonapi.telemetry.domain.repository.TelemetryRepositoryInterface;
+import com.traceon.traceonapi.telemetry.domain.service.TelemetryAnalysisService;
 import com.traceon.traceonapi.telemetry.domain.valueobject.Localizacao;
 import com.traceon.traceonapi.telemetry.dto.CreateTelemetryRequest;
 import com.traceon.traceonapi.telemetry.dto.LocationResponse;
@@ -20,16 +23,23 @@ import java.util.UUID;
 public class TelemetryService {
 
     private final TelemetryRepositoryInterface repository;
+    private final AlertaRepositoryInterface alertRepository;
 
+    private final TelemetryAnalysisService telemetryAnalysisService;
     private final DispositivoRepositoryInterface dispositivoRepository;
 
     public TelemetryService(
             TelemetryRepositoryInterface repository,
-            DispositivoRepositoryInterface dispositivoRepository
+            DispositivoRepositoryInterface dispositivoRepository,
+            AlertaRepositoryInterface alertRepository
     ) {
 
         this.repository = repository;
         this.dispositivoRepository = dispositivoRepository;
+        this.alertRepository = alertRepository;
+
+        this.telemetryAnalysisService =
+                new TelemetryAnalysisService();
 
     }
 
@@ -68,10 +78,18 @@ public class TelemetryService {
 
         repository.salvar(telemetria);
 
+        List<Alerta> alertasGerados =
+                telemetryAnalysisService.analisar(
+                        telemetria
+                );
+
+        alertasGerados.forEach(
+                alertRepository::salvar
+        );
+
         return toResponse(telemetria);
 
     }
-
     public List<TelemetryResponse> buscarHistorico(
             UUID dispositivoId
     ) {
