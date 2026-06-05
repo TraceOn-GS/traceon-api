@@ -1,9 +1,15 @@
 package com.traceon.traceonapi.mission.application;
 
+import com.traceon.traceonapi.device.domain.entity.DispositivoEspacial;
+import com.traceon.traceonapi.device.domain.enums.StatusDispositivo;
+import com.traceon.traceonapi.device.domain.repository.DispositivoRepositoryInterface;
 import com.traceon.traceonapi.mission.domain.entity.Missao;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoDesativadoParaMissaoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoNaoEncontradoParaMissaoException;
 import com.traceon.traceonapi.mission.domain.exception.MissaoNaoEncontradaException;
 import com.traceon.traceonapi.mission.domain.repository.MissionRepositoryInterface;
 import com.traceon.traceonapi.mission.dto.CreateMissionRequest;
+import com.traceon.traceonapi.mission.dto.MissionDeviceResponse;
 import com.traceon.traceonapi.mission.dto.MissionResponse;
 import com.traceon.traceonapi.mission.dto.MissionSummaryResponse;
 import com.traceon.traceonapi.mission.dto.UpdateMissionRequest;
@@ -16,9 +22,14 @@ import java.util.UUID;
 public class MissionApplicationService {
 
     private final MissionRepositoryInterface repository;
+    private final DispositivoRepositoryInterface dispositivoRepository;
 
-    public MissionApplicationService(MissionRepositoryInterface repository) {
+    public MissionApplicationService(
+            MissionRepositoryInterface repository,
+            DispositivoRepositoryInterface dispositivoRepository
+    ) {
         this.repository = repository;
+        this.dispositivoRepository = dispositivoRepository;
     }
 
     public MissionResponse create(CreateMissionRequest request) {
@@ -105,6 +116,46 @@ public class MissionApplicationService {
         return toResponse(missao);
     }
 
+    public List<MissionDeviceResponse> listarDispositivos(UUID missionId) {
+        Missao missao = repository.findById(missionId)
+                .orElseThrow(() -> new MissaoNaoEncontradaException(missionId));
+
+        return missao.getDispositivosAssociados()
+                .stream()
+                .map(dispositivoId -> dispositivoRepository.buscarPorId(dispositivoId)
+                        .orElseThrow(() -> new DispositivoNaoEncontradoParaMissaoException(dispositivoId)))
+                .map(this::toDeviceResponse)
+                .toList();
+    }
+
+    public MissionResponse associarDispositivo(UUID missionId, UUID dispositivoId) {
+        Missao missao = repository.findById(missionId)
+                .orElseThrow(() -> new MissaoNaoEncontradaException(missionId));
+
+        DispositivoEspacial dispositivo = dispositivoRepository.buscarPorId(dispositivoId)
+                .orElseThrow(() -> new DispositivoNaoEncontradoParaMissaoException(dispositivoId));
+
+        if (dispositivo.getStatus() == StatusDispositivo.DESATIVADO) {
+            throw new DispositivoDesativadoParaMissaoException(dispositivoId);
+        }
+
+        missao.associarDispositivo(dispositivoId);
+        repository.update(missao);
+        return toResponse(missao);
+    }
+
+    public MissionResponse desassociarDispositivo(UUID missionId, UUID dispositivoId) {
+        Missao missao = repository.findById(missionId)
+                .orElseThrow(() -> new MissaoNaoEncontradaException(missionId));
+
+        dispositivoRepository.buscarPorId(dispositivoId)
+                .orElseThrow(() -> new DispositivoNaoEncontradoParaMissaoException(dispositivoId));
+
+        missao.desassociarDispositivo(dispositivoId);
+        repository.update(missao);
+        return toResponse(missao);
+    }
+
     private MissionResponse toResponse(Missao missao) {
         return new MissionResponse(
                 missao.getId(),
@@ -132,5 +183,14 @@ public class MissionApplicationService {
                 missao.getDataFimPrevista()
         );
     }
-}
 
+    private MissionDeviceResponse toDeviceResponse(DispositivoEspacial dispositivo) {
+        return new MissionDeviceResponse(
+                dispositivo.getId(),
+                dispositivo.getCodigoSerial(),
+                dispositivo.getModelo(),
+                dispositivo.getEnergiaAtual(),
+                dispositivo.getStatus()
+        );
+    }
+}

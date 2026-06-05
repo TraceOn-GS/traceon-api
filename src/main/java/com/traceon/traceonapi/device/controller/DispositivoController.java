@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/devices")
@@ -37,7 +38,7 @@ public class DispositivoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<DispositivoResponse>> findById(
-            @PathVariable Long id
+            @PathVariable UUID id
     ) {
 
         DispositivoResponse dispositivo =
@@ -76,7 +77,7 @@ public class DispositivoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<DispositivoResponse>> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid
             @RequestBody UpdateDispositivoRequest request
     ) {
@@ -96,7 +97,7 @@ public class DispositivoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<Void>> delete(
-            @PathVariable Long id
+            @PathVariable UUID id
     ) {
 
         service.delete(id);
@@ -113,7 +114,7 @@ public class DispositivoController {
 
     @PatchMapping("/{id}/ativar")
     public ResponseEntity<SuccessResponse<DispositivoResponse>> ativar(
-            @PathVariable Long id
+            @PathVariable UUID id
     ) {
 
         DispositivoResponse dispositivo =
@@ -131,7 +132,7 @@ public class DispositivoController {
 
     @PatchMapping("/{id}/desativar")
     public ResponseEntity<SuccessResponse<DispositivoResponse>> desativar(
-            @PathVariable Long id
+            @PathVariable UUID id
     ) {
 
         DispositivoResponse dispositivo =
@@ -149,7 +150,7 @@ public class DispositivoController {
 
     @PatchMapping("/{id}/manutencao")
     public ResponseEntity<SuccessResponse<DispositivoResponse>> manutencao(
-            @PathVariable Long id
+            @PathVariable UUID id
     ) {
 
         DispositivoResponse dispositivo =

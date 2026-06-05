@@ -3,6 +3,10 @@ package com.traceon.traceonapi.shared;
 
 import com.traceon.traceonapi.device.domain.exception.DispositivoDesativadoException;
 import com.traceon.traceonapi.device.domain.exception.DispositivoNaoEncontradoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoDesativadoParaMissaoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoJaAssociadoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoNaoAssociadoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoNaoEncontradoParaMissaoException;
 import com.traceon.traceonapi.mission.domain.exception.MissaoNaoEncontradaException;
 import com.traceon.traceonapi.mission.domain.exception.OperacaoMissaoInvalidaException;
 import com.traceon.traceonapi.shared.dto.ErrorResponse;
@@ -111,4 +115,58 @@ public class HttpExceptionHandler {
 
     }
 
+    @ExceptionHandler(
+            DispositivoNaoEncontradoParaMissaoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleDispositivoNaoEncontradoParaMissao(
+            DispositivoNaoEncontradoParaMissaoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            DispositivoDesativadoParaMissaoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleDispositivoDesativadoParaMissao(
+            DispositivoDesativadoParaMissaoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    @ExceptionHandler({
+            DispositivoJaAssociadoException.class,
+            DispositivoNaoAssociadoException.class
+    })
+    public ResponseEntity<ErrorResponse> handleDispositivoAssociacaoInvalida(
+            RuntimeException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
 }

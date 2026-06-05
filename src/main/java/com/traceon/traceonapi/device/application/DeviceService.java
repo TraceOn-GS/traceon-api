@@ -9,13 +9,12 @@ import com.traceon.traceonapi.device.dto.UpdateDispositivoRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DeviceService {
 
     private final DispositivoRepositoryInterface dispositivoRepository;
-
-    private Long sequence = 1L;
 
     public DeviceService(
             DispositivoRepositoryInterface dispositivoRepository
@@ -29,7 +28,7 @@ public class DeviceService {
 
         DispositivoEspacial dispositivo =
                 new DispositivoEspacial(
-                        sequence++,
+                        UUID.randomUUID(),
                         request.codigoSerial(),
                         request.modelo(),
                         request.energiaAtual()
@@ -51,7 +50,7 @@ public class DeviceService {
     }
 
     public DispositivoResponse findById(
-            Long id
+            UUID id
     ) {
 
         return dispositivoRepository.buscarPorId(id)
@@ -64,7 +63,7 @@ public class DeviceService {
     }
 
     public DispositivoResponse update(
-            Long id,
+            UUID id,
             UpdateDispositivoRequest request
     ) {
 
@@ -88,7 +87,7 @@ public class DeviceService {
     }
 
     public void delete(
-            Long id
+            UUID id
     ) {
 
         dispositivoRepository.remover(id);
@@ -96,7 +95,7 @@ public class DeviceService {
     }
 
     public DispositivoResponse ativar(
-            Long id
+            UUID id
     ) {
 
         DispositivoEspacial dispositivo =
@@ -115,7 +114,7 @@ public class DeviceService {
     }
 
     public DispositivoResponse desativar(
-            Long id
+            UUID id
     ) {
 
         DispositivoEspacial dispositivo =
@@ -134,7 +133,7 @@ public class DeviceService {
     }
 
     public DispositivoResponse colocarEmManutencao(
-            Long id
+            UUID id
     ) {
 
         DispositivoEspacial dispositivo =

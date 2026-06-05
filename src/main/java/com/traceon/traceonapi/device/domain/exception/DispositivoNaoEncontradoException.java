@@ -1,10 +1,12 @@
 package com.traceon.traceonapi.device.domain.exception;
 
+import java.util.UUID;
+
 public class DispositivoNaoEncontradoException
         extends RuntimeException {
 
     public DispositivoNaoEncontradoException(
-            Long id
+            UUID id
     ) {
 
         super(

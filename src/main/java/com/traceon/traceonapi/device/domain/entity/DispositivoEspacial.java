@@ -6,18 +6,20 @@ import com.traceon.traceonapi.device.dto.CreateDispositivoRequest;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class DispositivoEspacial {
 
-    private Long id;
+    private UUID id;
     private String codigoSerial;
     private String modelo;
     private Double energiaAtual;
     private StatusDispositivo status;
 
     public DispositivoEspacial(
-            Long id,
+            UUID id,
             String codigoSerial,
             String modelo,
             Double energiaAtual

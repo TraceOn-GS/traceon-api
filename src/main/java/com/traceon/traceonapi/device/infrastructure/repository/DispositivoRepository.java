@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class DispositivoRepository implements DispositivoRepositoryInterface {
@@ -13,7 +14,7 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
     private final List<DispositivoEspacial> dispositivos = new ArrayList<>();
 
     @Override
-    public Optional<DispositivoEspacial> buscarPorId(Long id){
+    public Optional<DispositivoEspacial> buscarPorId(UUID id){
         return dispositivos.stream()
                 .filter(d -> d.getId().equals(id))
                 .findFirst();
@@ -42,7 +43,7 @@ public class DispositivoRepository implements DispositivoRepositoryInterface {
     }
 
     @Override
-    public void remover(Long id){
+    public void remover(UUID id){
         dispositivos.removeIf(d -> d.getId().equals(id));
     }
 }

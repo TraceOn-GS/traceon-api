@@ -3,13 +3,17 @@ package com.traceon.traceonapi.mission.domain.entity;
 import com.traceon.traceonapi.mission.domain.enums.PrioridadeMissao;
 import com.traceon.traceonapi.mission.domain.enums.StatusMissao;
 import com.traceon.traceonapi.mission.domain.enums.TipoEventoMissao;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoJaAssociadoException;
+import com.traceon.traceonapi.mission.domain.exception.DispositivoNaoAssociadoException;
 import com.traceon.traceonapi.mission.domain.exception.OperacaoMissaoInvalidaException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public class Missao {
@@ -26,6 +30,7 @@ public class Missao {
     private LocalDateTime dataEncerramento;
     private final LocalDateTime criadoEm;
     private final List<EventoMissao> eventos = new ArrayList<>();
+    private final Set<UUID> dispositivosAssociados = new LinkedHashSet<>();
 
     public Missao(
             UUID id,
@@ -115,6 +120,24 @@ public class Missao {
         this.dataFimPrevista = Objects.requireNonNull(dataFimPrevista, "Data fim prevista obrigatoria");
     }
 
+    public void associarDispositivo(UUID dispositivoId) {
+        validarPodeAlterar();
+
+        UUID id = Objects.requireNonNull(dispositivoId, "Id do dispositivo obrigatorio");
+        if (!dispositivosAssociados.add(id)) {
+            throw new DispositivoJaAssociadoException(id);
+        }
+    }
+
+    public void desassociarDispositivo(UUID dispositivoId) {
+        validarPodeAlterar();
+
+        UUID id = Objects.requireNonNull(dispositivoId, "Id do dispositivo obrigatorio");
+        if (!dispositivosAssociados.remove(id)) {
+            throw new DispositivoNaoAssociadoException(id);
+        }
+    }
+
     private void validarPodeAlterar() {
         if (status == StatusMissao.FINALIZADA) {
             throw new OperacaoMissaoInvalidaException("A missao finalizada nao pode ser alterada.");
@@ -171,6 +194,10 @@ public class Missao {
 
     public List<EventoMissao> getEventos() {
         return Collections.unmodifiableList(eventos);
+    }
+
+    public Set<UUID> getDispositivosAssociados() {
+        return Collections.unmodifiableSet(dispositivosAssociados);
     }
 }
 

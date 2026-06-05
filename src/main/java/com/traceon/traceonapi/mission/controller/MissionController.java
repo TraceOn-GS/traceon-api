@@ -2,6 +2,7 @@ package com.traceon.traceonapi.mission.controller;
 
 import com.traceon.traceonapi.mission.application.MissionApplicationService;
 import com.traceon.traceonapi.mission.dto.CreateMissionRequest;
+import com.traceon.traceonapi.mission.dto.MissionDeviceResponse;
 import com.traceon.traceonapi.mission.dto.MissionResponse;
 import com.traceon.traceonapi.mission.dto.MissionSummaryResponse;
 import com.traceon.traceonapi.mission.dto.UpdateMissionRequest;
@@ -144,5 +145,51 @@ public class MissionController {
                 )
         );
     }
-}
 
+    @GetMapping("/{missionId}/devices")
+    public ResponseEntity<SuccessResponse<List<MissionDeviceResponse>>> listarDispositivos(
+            @PathVariable UUID missionId
+    ) {
+        List<MissionDeviceResponse> dispositivos = service.listarDispositivos(missionId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Dispositivos da missao encontrados com sucesso.",
+                        200,
+                        dispositivos
+                )
+        );
+    }
+
+    @PatchMapping("/{missionId}/devices/{deviceId}")
+    public ResponseEntity<SuccessResponse<MissionResponse>> associarDispositivo(
+            @PathVariable UUID missionId,
+            @PathVariable UUID deviceId
+    ) {
+        MissionResponse missao = service.associarDispositivo(missionId, deviceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Dispositivo associado a missao com sucesso.",
+                        200,
+                        missao
+                )
+        );
+    }
+
+    @DeleteMapping("/{missionId}/devices/{deviceId}")
+    public ResponseEntity<SuccessResponse<MissionResponse>> desassociarDispositivo(
+            @PathVariable UUID missionId,
+            @PathVariable UUID deviceId
+    ) {
+        MissionResponse missao = service.desassociarDispositivo(missionId, deviceId);
+
+        return ResponseEntity.ok(
+                new SuccessResponse<>(
+                        "Dispositivo removido da missao com sucesso.",
+                        200,
+                        missao
+                )
+        );
+    }
+}

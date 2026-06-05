@@ -1,9 +1,10 @@
-package com.traceon.traceonapi.device.dto;
+package com.traceon.traceonapi.mission.dto;
 
 import com.traceon.traceonapi.device.domain.enums.StatusDispositivo;
+
 import java.util.UUID;
 
-public record DispositivoResponse(
+public record MissionDeviceResponse(
         UUID id,
         String codigoSerial,
         String modelo,
@@ -11,3 +12,4 @@ public record DispositivoResponse(
         StatusDispositivo status
 ) {
 }
+
