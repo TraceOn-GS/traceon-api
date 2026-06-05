@@ -1,0 +1,30 @@
+package com.traceon.traceonapi.occurrence.dto;
+
+import com.traceon.traceonapi.alert.domain.enums.SeveridadeAlerta;
+import com.traceon.traceonapi.occurrence.domain.enums.StatusOcorrencia;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record OccurrenceResponse(
+
+        UUID id,
+
+        String codigo,
+
+        String titulo,
+
+        String descricao,
+
+        UUID alertaId,
+
+        SeveridadeAlerta severidade,
+
+        StatusOcorrencia status,
+
+        LocalDateTime criadaEm,
+
+        LocalDateTime encerradaEm
+
+) {
+}
