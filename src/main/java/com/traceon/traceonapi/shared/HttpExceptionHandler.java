@@ -1,6 +1,11 @@
 package com.traceon.traceonapi.shared;
-
-
+import com.traceon.traceonapi.identity.domain.exception.EmailJaCadastradoException;
+import com.traceon.traceonapi.identity.domain.exception.UsuarioBloqueadoException;
+import com.traceon.traceonapi.identity.domain.exception.UsuarioInativoException;
+import com.traceon.traceonapi.identity.domain.exception.UsuarioNaoEncontradoException;
+import com.traceon.traceonapi.maintenance.domain.exception.ChecklistPendenteException;
+import com.traceon.traceonapi.maintenance.domain.exception.ManutencaoNaoEncontradaException;
+import com.traceon.traceonapi.maintenance.domain.exception.OperacaoManutencaoInvalidaException;
 import com.traceon.traceonapi.alert.domain.exception.AlertaJaResolvidoException;
 import com.traceon.traceonapi.alert.domain.exception.AlertaNaoEncontradoException;
 import com.traceon.traceonapi.alert.domain.exception.AlertaNaoPodeSerIgnoradoException;
@@ -274,6 +279,119 @@ public class HttpExceptionHandler {
     )
     public ResponseEntity<ErrorResponse> handleAlertaNaoPodeSerIgnorado(
             AlertaNaoPodeSerIgnoradoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    //  MAINTENANCE EXCEPTIONS -------------
+
+    @ExceptionHandler(
+            ManutencaoNaoEncontradaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleManutencaoNaoEncontrada(
+            ManutencaoNaoEncontradaException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            OperacaoManutencaoInvalidaException.class
+    )
+    public ResponseEntity<ErrorResponse> handleOperacaoManutencaoInvalida(
+            OperacaoManutencaoInvalidaException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            ChecklistPendenteException.class
+    )
+    public ResponseEntity<ErrorResponse> handleChecklistPendente(
+            ChecklistPendenteException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    // IDENTITY EXCEPTIONS -------------
+
+    @ExceptionHandler(
+            UsuarioNaoEncontradoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleUsuarioNaoEncontrado(
+            UsuarioNaoEncontradoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                404
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(
+            EmailJaCadastradoException.class
+    )
+    public ResponseEntity<ErrorResponse> handleEmailJaCadastrado(
+            EmailJaCadastradoException ex
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ErrorResponse(
+                                ex.getMessage(),
+                                400
+                        )
+                );
+
+    }
+
+    @ExceptionHandler({
+            UsuarioInativoException.class,
+            UsuarioBloqueadoException.class
+    })
+    public ResponseEntity<ErrorResponse> handleUsuarioInvalido(
+            RuntimeException ex
     ) {
 
         return ResponseEntity
