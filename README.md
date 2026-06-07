@@ -1,19 +1,707 @@
-# TraceOn API
+# 🚀 TraceOn API
 
-API em Spring Boot estruturada por Bounded Contexts seguindo DDD.
+## Sobre o Projeto
 
-## Comandos basicos
+O **TraceOn** é uma API desenvolvida em **Java 21 + Spring Boot** para monitoramento e controle de dispositivos espaciais, gerenciamento de missões, coleta de telemetrias, geração de alertas, tratamento de ocorrências, planejamento de manutenções e gerenciamento de usuários.
 
-Windows PowerShell:
+O projeto foi estruturado utilizando conceitos de **Domain-Driven Design (DDD)**, separando claramente as responsabilidades de negócio em **Bounded Contexts**, permitindo evolução independente de cada módulo.
 
-```powershell
-.\mvnw.cmd test
-.\mvnw.cmd spring-boot:run
+---
+
+# Arquitetura
+
+A aplicação segue uma arquitetura inspirada em DDD e Clean Architecture.
+
+Estrutura padrão dos contextos:
+
+```text
+context/
+│
+├── application/
+│   └── Services
+│
+├── controller/
+│   └── Controllers REST
+│
+├── domain/
+│   ├── entity/
+│   ├── enums/
+│   ├── event/
+│   ├── exception/
+│   └── repository/
+│
+├── dto/
+│
+└── infrastructure/
+    └── repository/
 ```
 
-Linux/macOS:
+---
 
-```bash
-./mvnw test
-./mvnw spring-boot:run
+# Aplicação do DDD
+
+Cada contexto representa uma área específica do domínio.
+
+Atualmente a solução é composta pelos seguintes contextos:
+
+* Device Context
+* Mission Context
+* Telemetry Context
+* Alert Context
+* Occurrence Context
+* Maintenance Context
+* Identity Context
+
+Cada contexto possui:
+
+* Entidades próprias
+* Regras de negócio próprias
+* Exceções específicas
+* Casos de uso isolados
+* Repositórios independentes
+
+---
+
+# Device Context
+
+Responsável pelo gerenciamento dos dispositivos espaciais monitorados pelo sistema.
+
+## Aggregate Root
+
+```text
+DispositivoEspacial
 ```
+
+## Responsabilidades
+
+* Cadastro de dispositivos
+* Atualização de dados
+* Controle operacional
+* Controle de manutenção
+
+## Casos de Uso
+
+### Criar dispositivo
+
+```text
+POST /devices
+```
+
+### Buscar dispositivos
+
+```text
+GET /devices
+```
+
+### Buscar dispositivo por ID
+
+```text
+GET /devices/{id}
+```
+
+### Atualizar dispositivo
+
+```text
+PUT /devices/{id}
+```
+
+### Remover dispositivo
+
+```text
+DELETE /devices/{id}
+```
+
+### Ativar dispositivo
+
+```text
+PATCH /devices/{id}/ativar
+```
+
+### Desativar dispositivo
+
+```text
+PATCH /devices/{id}/desativar
+```
+
+### Colocar em manutenção
+
+```text
+PATCH /devices/{id}/manutencao
+```
+
+## Estados do Dispositivo
+
+```text
+OPERACIONAL
+MANUTENCAO
+DESATIVADO
+```
+
+---
+
+# Mission Context
+
+Responsável pelo planejamento e execução de missões espaciais.
+
+## Aggregate Root
+
+```text
+Missao
+```
+
+## Entidades Internas
+
+```text
+EventoMissao
+```
+
+## Responsabilidades
+
+* Planejamento de missões
+* Controle de ciclo de vida
+* Associação de dispositivos
+* Registro de eventos operacionais
+
+## Casos de Uso
+
+### Criar missão
+
+```text
+POST /missions
+```
+
+### Atualizar missão
+
+```text
+PUT /missions/{id}
+```
+
+### Iniciar missão
+
+```text
+PATCH /missions/{id}/iniciar
+```
+
+### Pausar missão
+
+```text
+PATCH /missions/{id}/pausar
+```
+
+### Finalizar missão
+
+```text
+PATCH /missions/{id}/finalizar
+```
+
+### Cancelar missão
+
+```text
+PATCH /missions/{id}/cancelar
+```
+
+### Associar dispositivo
+
+```text
+POST /missions/{id}/devices/{deviceId}
+```
+
+### Desassociar dispositivo
+
+```text
+DELETE /missions/{id}/devices/{deviceId}
+```
+
+---
+
+# Telemetry Context
+
+Responsável pela coleta e armazenamento de dados operacionais dos dispositivos.
+
+## Aggregate Root
+
+```text
+Telemetria
+```
+
+## Value Objects
+
+```text
+Localizacao
+```
+
+## Responsabilidades
+
+* Registrar telemetrias
+* Histórico operacional
+* Última leitura disponível
+* Alimentar análise automática de alertas
+
+## Dados Monitorados
+
+* Temperatura interna
+* Temperatura externa
+* Nível de energia
+* Radiação
+* Qualidade do sinal
+* Localização espacial
+
+## Casos de Uso
+
+### Registrar telemetria
+
+```text
+POST /devices/{id}/telemetries
+```
+
+### Buscar histórico
+
+```text
+GET /devices/{id}/telemetries
+```
+
+### Buscar última telemetria
+
+```text
+GET /devices/{id}/telemetries/latest
+```
+
+---
+
+# Alert Context
+
+Responsável por detectar e representar situações anormais.
+
+## Aggregate Root
+
+```text
+Alerta
+```
+
+## Entidades Internas
+
+```text
+EventoAlerta
+```
+
+## Responsabilidades
+
+* Geração de alertas
+* Controle de severidade
+* Controle de resolução
+* Integração com ocorrências
+
+## Tipos de Alerta
+
+```text
+TEMPERATURA_ELEVADA
+TEMPERATURA_CRITICA
+ENERGIA_BAIXA
+RADIACAO_ELEVADA
+SINAL_FRACO
+```
+
+## Severidades
+
+```text
+BAIXA
+MEDIA
+ALTA
+CRITICA
+```
+
+## Status
+
+```text
+ABERTO
+EM_ANALISE
+RESOLVIDO
+IGNORADO
+```
+
+## Regras Automáticas
+
+### Temperatura
+
+```text
+> 80°C  → TEMPERATURA_ELEVADA
+> 95°C  → TEMPERATURA_CRITICA
+```
+
+### Energia
+
+```text
+< 20% → ENERGIA_BAIXA
+```
+
+### Sinal
+
+```text
+< 30% → SINAL_FRACO
+```
+
+### Radiação
+
+```text
+Acima do limite operacional → RADIACAO_ELEVADA
+```
+
+## Casos de Uso
+
+* Criar alerta
+* Buscar alertas
+* Resolver alerta
+* Ignorar alerta
+* Alterar severidade
+
+---
+
+# Occurrence Context
+
+Responsável pelo tratamento operacional de problemas identificados.
+
+## Aggregate Root
+
+```text
+Ocorrencia
+```
+
+## Entidades Internas
+
+```text
+EventoOcorrencia
+```
+
+## Responsabilidades
+
+* Investigação de problemas
+* Tratamento operacional
+* Encerramento de incidentes
+
+## Fluxo
+
+```text
+ABERTA
+↓
+EM_ANALISE
+↓
+EM_TRATAMENTO
+↓
+ENCERRADA
+```
+
+ou
+
+```text
+ABERTA
+↓
+CANCELADA
+```
+
+## Casos de Uso
+
+### Criar ocorrência
+
+```text
+POST /occurrences
+```
+
+### Iniciar análise
+
+```text
+PATCH /occurrences/{id}/analise
+```
+
+### Iniciar tratamento
+
+```text
+PATCH /occurrences/{id}/tratamento
+```
+
+### Encerrar ocorrência
+
+```text
+PATCH /occurrences/{id}/encerrar
+```
+
+### Cancelar ocorrência
+
+```text
+PATCH /occurrences/{id}/cancelar
+```
+
+---
+
+# Maintenance Context
+
+Responsável pela manutenção preventiva e corretiva dos dispositivos.
+
+## Aggregate Root
+
+```text
+Manutencao
+```
+
+## Entidades Internas
+
+```text
+ChecklistManutencao
+```
+
+## Eventos
+
+```text
+MaintenanceScheduledEvent
+```
+
+## Responsabilidades
+
+* Planejamento de manutenção
+* Execução de manutenção
+* Histórico técnico
+* Controle de checklist
+
+## Tipos
+
+```text
+PREVENTIVA
+CORRETIVA
+EMERGENCIAL
+REMOTA
+```
+
+## Status
+
+```text
+ABERTA
+EM_EXECUCAO
+AGUARDANDO_PECA
+CONCLUIDA
+CANCELADA
+```
+
+## Casos de Uso
+
+### Criar manutenção
+
+```text
+POST /maintenances
+```
+
+### Iniciar manutenção
+
+```text
+PATCH /maintenances/{id}/iniciar
+```
+
+### Aguardar peça
+
+```text
+PATCH /maintenances/{id}/aguardando-peca
+```
+
+### Concluir manutenção
+
+```text
+PATCH /maintenances/{id}/concluir
+```
+
+### Cancelar manutenção
+
+```text
+PATCH /maintenances/{id}/cancelar
+```
+
+### Adicionar item de checklist
+
+```text
+POST /maintenances/{id}/checklists
+```
+
+---
+
+# Identity Context
+
+Responsável pela gestão dos usuários da plataforma.
+
+## Aggregate Root
+
+```text
+Usuario
+```
+
+## Responsabilidades
+
+* Cadastro de usuários
+* Controle de acesso
+* Gestão de perfis
+* Ativação e bloqueio de contas
+
+## Perfis
+
+```text
+ADMINISTRADOR
+OPERADOR
+ANALISTA
+TECNICO
+```
+
+## Status
+
+```text
+ATIVO
+INATIVO
+BLOQUEADO
+```
+
+## Casos de Uso
+
+### Criar usuário
+
+```text
+POST /users
+```
+
+### Atualizar usuário
+
+```text
+PUT /users/{id}
+```
+
+### Ativar usuário
+
+```text
+PATCH /users/{id}/ativar
+```
+
+### Bloquear usuário
+
+```text
+PATCH /users/{id}/bloquear
+```
+
+### Desativar usuário
+
+```text
+PATCH /users/{id}/desativar
+```
+
+---
+
+# Tratamento Global de Exceções
+
+A aplicação centraliza o tratamento de erros através da classe:
+
+```java
+HttpExceptionHandler
+```
+
+Responsabilidades:
+
+* Capturar exceções de domínio
+* Padronizar respostas HTTP
+* Evitar tratamento repetido nos controllers
+* Melhorar rastreabilidade dos erros
+
+Estrutura padrão:
+
+```json
+{
+  "message": "Descrição do erro",
+  "status": 400
+}
+```
+
+---
+
+# DTOs
+
+Todos os endpoints utilizam DTOs para:
+
+* Entrada de dados (Request)
+* Saída de dados (Response)
+
+Benefícios:
+
+* Isolamento do domínio
+* Controle de serialização
+* Segurança
+* Evolução independente da API
+
+---
+
+# Repositórios
+
+Atualmente o projeto utiliza implementações em memória para fins acadêmicos e de prototipação.
+
+Exemplos:
+
+```java
+DispositivoRepository
+InMemoryMissionRepository
+TelemetryRepository
+AlertRepository
+OccurrenceRepository
+MaintenanceRepository
+UserRepository
+```
+
+Todos implementam contratos definidos no domínio.
+
+---
+
+# Eventos de Domínio
+
+O sistema utiliza Domain Events para registrar acontecimentos importantes.
+
+Exemplos:
+
+```text
+MissionStartedEvent
+AlertGeneratedEvent
+MaintenanceScheduledEvent
+OccurrenceCreatedEvent
+```
+
+Esses eventos representam fatos do domínio e permitem futuras integrações assíncronas.
+
+---
+
+# Fluxo Geral da Plataforma
+
+```text
+Dispositivo
+    ↓
+Telemetria
+    ↓
+Alerta
+    ↓
+Ocorrência
+    ↓
+Manutenção
+```
+
+1. O dispositivo envia telemetria.
+2. A telemetria é analisada.
+3. Alertas são gerados automaticamente.
+4. Alertas podem originar ocorrências.
+5. Ocorrências podem originar manutenções.
+6. A manutenção atualiza o estado operacional do dispositivo.
+
+---
+
+# Tecnologias
+
+* Java 21
+* Spring Boot
+* Spring Web
+* Jakarta Validation
+* Lombok
+* UUID
+* Domain-Driven Design (DDD)
+
+---
+
+# Objetivo Acadêmico
+
+O TraceOn foi desenvolvido como uma plataforma de monitoramento espacial orientada a domínio, com foco em boas práticas de modelagem, separação de responsabilidades e implementação de conceitos de DDD aplicados a sistemas distribuídos e críticos.
