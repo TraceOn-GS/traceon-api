@@ -8,6 +8,45 @@ O projeto foi estruturado utilizando conceitos de **Domain-Driven Design (DDD)**
 
 ---
 
+# Como Executar
+
+## Pré-requisitos
+
+- Java 21
+- Maven 3.9+
+
+## Executando a aplicação
+
+```bash
+./mvnw spring-boot:run
+```
+
+ou
+
+```bash
+mvn spring-boot:run
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:8080
+```
+
+---
+
+# Como Testar
+
+Os exemplos deste documento podem ser executados utilizando:
+
+- Postman
+- Insomnia
+- Thunder Client (VS Code)
+
+Todos os endpoints utilizam JSON como formato de entrada e saída.
+
+---
+
 # Arquitetura
 
 A aplicação segue uma arquitetura inspirada em DDD e Clean Architecture.
@@ -87,6 +126,20 @@ DispositivoEspacial
 POST /devices
 ```
 
+#### Exemplo de Request
+
+```json
+{
+  "nome": "Voyager I",
+  "codigoSerial": "SAT-001",
+  "modelo": "VX-100",
+  "fabricante": "NASA",
+  "energiaAtual": 85,
+  "integridadeEstrutural": 100,
+  "firmwareVersion": "1.0.0"
+}
+```
+
 ### Buscar dispositivos
 
 ```text
@@ -103,6 +156,17 @@ GET /devices/{id}
 
 ```text
 PUT /devices/{id}
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "nome": "Voyager I",
+  "modelo": "VX-200",
+  "energiaAtual": 90,
+  "firmwareVersion": "1.1.0"
+}
 ```
 
 ### Remover dispositivo
@@ -170,10 +234,33 @@ EventoMissao
 POST /missions
 ```
 
+#### Exemplo de Request
+
+```json
+{
+  "codigo": "MIS-001",
+  "nome": "Missão Marte",
+  "objetivo": "Mapeamento de superfície",
+  "descricao": "Monitoramento geológico da região norte",
+  "prioridade": "ALTA",
+  "dataFimPrevista": "2026-12-31T23:59:59"
+}
+```
+
 ### Atualizar missão
 
 ```text
 PUT /missions/{id}
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "nome": "Missão Marte Atualizada",
+  "descricao": "Nova descrição operacional",
+  "prioridade": "CRITICA"
+}
 ```
 
 ### Iniciar missão
@@ -252,6 +339,26 @@ Localizacao
 
 ```text
 POST /devices/{id}/telemetries
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "temperaturaInterna": 42.5,
+  "temperaturaExterna": -80.0,
+  "pressao": 1.2,
+  "radiacao": 18.4,
+  "sinalComunicacao": 95,
+  "statusColeta": "VALIDA",
+  "localizacao": {
+    "latitude": 15.75,
+    "longitude": 30.22,
+    "altitude": 420.5,
+    "velocidade": 27500,
+    "direcao": 180
+  }
+}
 ```
 
 ### Buscar histórico
@@ -348,7 +455,23 @@ Acima do limite operacional → RADIACAO_ELEVADA
 
 ## Casos de Uso
 
-* Criar alerta
+### Criar alerta
+
+```text
+POST /alerts
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "tipo": "TEMPERATURA_CRITICA",
+  "severidade": "CRITICA",
+  "descricao": "Temperatura acima do limite operacional",
+  "deviceId": "uuid"
+}
+```
+
 * Buscar alertas
 * Resolver alerta
 * Ignorar alerta
@@ -404,6 +527,18 @@ CANCELADA
 
 ```text
 POST /occurrences
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "titulo": "Falha de comunicação",
+  "descricao": "Dispositivo ficou sem comunicação por mais de 15 minutos",
+  "categoria": "COMUNICACAO",
+  "deviceId": "uuid",
+  "alertId": "uuid"
+}
 ```
 
 ### Iniciar análise
@@ -488,6 +623,18 @@ CANCELADA
 POST /maintenances
 ```
 
+#### Exemplo de Request
+
+```json
+{
+  "tipo": "CORRETIVA",
+  "prioridade": "ALTA",
+  "descricaoProblema": "Perda recorrente de comunicação",
+  "agendadaPara": "2026-07-10T09:00:00",
+  "deviceId": "uuid"
+}
+```
+
 ### Iniciar manutenção
 
 ```text
@@ -516,6 +663,15 @@ PATCH /maintenances/{id}/cancelar
 
 ```text
 POST /maintenances/{id}/checklists
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "descricao": "Verificar módulo de comunicação",
+  "ordemExecucao": 1
+}
 ```
 
 ---
@@ -562,10 +718,31 @@ BLOQUEADO
 POST /users
 ```
 
+#### Exemplo de Request
+
+```json
+{
+  "nome": "João Silva",
+  "email": "joao@traceon.com",
+  "senha": "123456",
+  "perfil": "OPERADOR"
+}
+```
+
 ### Atualizar usuário
 
 ```text
 PUT /users/{id}
+```
+
+#### Exemplo de Request
+
+```json
+{
+  "nome": "João Silva",
+  "email": "joao.silva@traceon.com",
+  "perfil": "SUPERVISOR"
+}
 ```
 
 ### Ativar usuário
